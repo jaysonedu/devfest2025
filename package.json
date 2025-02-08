@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+<<<<<<< HEAD
     "autoprefixer": "^10.4.20",
     "next": "^15.1.6",
     "openai": "^4.83.0",
@@ -29,5 +30,21 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+=======
+    "@types/node": "20.1.4",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
+    "autoprefixer": "10.4.14",
+    "concurrently": "^8.0.1",
+    "eslint": "8.40.0",
+    "eslint-config-next": "13.4.2",
+    "next": "13.4.3",
+    "postcss": "8.4.23",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "^5.4.0",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.0.4"
+>>>>>>> e4af4c31c2f17311cc3a26754c8faaa76ebd7e58
   }
 }
