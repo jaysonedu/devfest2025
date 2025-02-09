@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 
-function YesNoQuestion(props) {
+function YesNoQuestion({ question, isActive }) {
+  const [isClicked, setIsClicked] = useState(false);
   return (
     <div>
-      <h3>{props.question}</h3>
+      <h3>{question}</h3>
       <div>
-        <button className="px-4 py-2 rounded">Yes</button>
-        <button className="px-4 py-2 rounded">No</button>
+        <button
+          className={`px-4 py-2 rounded ${
+            isClicked ? "bg-gray-400" : "bg-gray-200"
+          }`}
+          onClick={() => setIsClicked(!isClicked)}
+        >
+          Yes
+        </button>
+        <button
+          className="px-4 py-2 rounded"
+          onClick={() => setIsClicked(!isClicked)}
+        >
+          No
+        </button>
       </div>
     </div>
   );
