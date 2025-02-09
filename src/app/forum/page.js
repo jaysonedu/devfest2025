@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function page() {
+export default function Forum() {
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ title: '', content: '' });
 
@@ -10,7 +10,7 @@ export default function page() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('/api/posts');
+        let response = await axios.get('http://localhost:5000/api/forum/posts');
         setPosts(response.data);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
@@ -18,12 +18,13 @@ export default function page() {
     };
     fetchPosts();
   }, []);
+  
 
   // Handle form submission to create a new post
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/posts', newPost);
+      let response = await axios.post('http://localhost:5000/api/forum/posts', newPost);
       setPosts([...posts, response.data]); // Add the new post to the list
       setNewPost({ title: '', content: '' }); // Clear the form
     } catch (error) {
@@ -68,7 +69,7 @@ export default function page() {
           <p>No posts found.</p>
         ) : (
           posts.map((post) => (
-            <div key={post._id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+            <div key={post.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
               <h3>{post.title}</h3>
               <p>{post.content}</p>
             </div>
