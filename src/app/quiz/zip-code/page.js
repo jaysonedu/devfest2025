@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
 
-function page() {
+function Page() {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -57,4 +57,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
