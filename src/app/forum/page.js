@@ -20,11 +20,12 @@ export default function Forum() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTag, setFilterTag] = useState('');
 
+  // Fetch posts from the API
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/forum/posts');
-        console.log('Fetched posts:', response.data); // Debugging to ensure tags are fetched
+        console.log('Fetched posts:', response.data);  // Debugging log
         setPosts(response.data);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
@@ -52,12 +53,57 @@ export default function Forum() {
     try {
       const response = await axios.post('http://localhost:5000/api/forum/posts', {
         ...newPost,
-        tags: newPost.tags || [] // Ensure tags are always sent
+        tags: newPost.tags || []
       });
       setPosts([...posts, response.data]);
       setNewPost({ title: '', content: '', tags: [] });
     } catch (error) {
       console.error('Failed to create post:', error);
+    }
+  };
+
+  const upvote = async (postId) => {
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/forum/posts/${postId}/upvote`);
+      const updatedPost = response.data;
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+      );
+    } catch (error) {
+      console.error('Failed to upvote post:', error);
+    }
+  };
+
+  const downvote = async (postId) => {
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/forum/posts/${postId}/downvote`);
+      const updatedPost = response.data;
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+      );
+    } catch (error) {
+      console.error('Failed to downvote post:', error);
+    }
+  };
+
+  const addComment = async (postId) => {
+    const commentText = commentTexts[postId];
+    if (!commentText || commentText.trim() === '') return;
+
+    try {
+      const response = await axios.post(`http://localhost:5000/api/forum/posts/${postId}/comments`, {
+        text: commentText,
+      });
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId ? { ...post, comments: [...post.comments, response.data] } : post
+        )
+      );
+
+      setCommentTexts((prev) => ({ ...prev, [postId]: '' }));
+    } catch (error) {
+      console.error('Failed to add comment:', error);
     }
   };
 
@@ -93,6 +139,8 @@ export default function Forum() {
             required
           />
         </div>
+
+        {/* Add Tags Section */}
         <div style={{ marginBottom: '10px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>Select Tags:</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
@@ -117,10 +165,22 @@ export default function Forum() {
             ))}
           </div>
         </div>
+
         <button type="submit" style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
           Create Post
         </button>
       </form>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'block', marginBottom: '5px' }}>Search:</label>
+        <input
+          type="text"
+          placeholder="Search by title, content, or comments..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+        />
+      </div>
 
       <div style={{ marginBottom: '20px' }}>
         <label style={{ display: 'block', marginBottom: '5px' }}>Filter by Tag:</label>
@@ -148,6 +208,15 @@ export default function Forum() {
               <h3>{post.title}</h3>
               <p>{post.content}</p>
               <p><strong>Tags:</strong> {post.tags?.join(', ') || 'No tags'}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                <button onClick={() => upvote(post.id)} style={{ padding: '5px 10px', fontSize: '14px' }}>
+                  ⬆️ Upvote
+                </button>
+                <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Votes: {post.votes || 0}</span>
+                <button onClick={() => downvote(post.id)} style={{ padding: '5px 10px', fontSize: '14px' }}>
+                  ⬇️ Downvote
+                </button>
+              </div>
               <div style={{ marginTop: '20px' }}>
                 <button onClick={() => toggleComments(post.id)} style={{ padding: '5px 10px' }}>
                   {expandedPost === post.id ? 'Hide Comments' : `Show Comments (${post.comments.length})`}
@@ -156,6 +225,26 @@ export default function Forum() {
                   <div style={{ marginTop: '10px' }}>
                     <h4>Comments:</h4>
                     {post.comments.length === 0 ? <p>No comments yet.</p> : null}
+                    {post.comments.map((comment) => (
+                      <p key={comment.id} style={{ padding: '5px 10px', borderBottom: '1px solid #eee' }}>
+                        {comment.text}
+                      </p>
+                    ))}
+                    <div style={{ marginTop: '10px' }}>
+                      <input
+                        type="text"
+                        placeholder="Add a comment"
+                        value={commentTexts[post.id] || ''}
+                        onChange={(e) => handleCommentChange(post.id, e.target.value)}
+                        style={{ width: '100%', padding: '5px' }}
+                      />
+                      <button
+                        onClick={() => addComment(post.id)}
+                        style={{ padding: '5px 10px', marginTop: '5px', cursor: 'pointer' }}
+                      >
+                        Add Comment
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
