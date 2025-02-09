@@ -77,40 +77,6 @@ export default function Forum() {
     }
   };
 
-  const addComment = async (postId) => {
-    const commentText = commentTexts[postId];
-    if (!commentText || commentText.trim() === "") return;
-
-    try {
-      const response = await axios.post(
-        `http://localhost:5001/api/forum/posts/${postId}/comments`,
-        {
-          text: commentText,
-        }
-      );
-
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === postId
-            ? { ...post, comments: [...post.comments, response.data] }
-            : post
-        )
-      );
-
-      setCommentTexts((prev) => ({ ...prev, [postId]: "" }));
-    } catch (error) {
-      console.error("Failed to add comment:", error);
-    }
-  };
-
-  const toggleComments = (postId) => {
-    setExpandedPost(expandedPost === postId ? null : postId);
-  };
-
-  const handleCommentChange = (postId, value) => {
-    setCommentTexts((prev) => ({ ...prev, [postId]: value }));
-  };
-
   const upvote = async (postId) => {
     try {
       const response = await axios.patch(
