@@ -3,8 +3,7 @@ import { useState } from "react";
 import { FaRegWindowClose } from "react-icons/fa";
 import axios from "axios";
 
-function ForumModal({ closeModal }) {
-  const [posts, setPosts] = useState([]);
+function ForumModal({ closeModal, setPosts }) {
   const [newPost, setNewPost] = useState({ title: "", content: "", tags: [] });
   const availableTags = [
     "qna",
@@ -17,7 +16,7 @@ function ForumModal({ closeModal }) {
   ];
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //closeModal(false);
+    closeModal(false);
     try {
       const response = await axios.post(
         "http://localhost:5001/api/forum/posts",
@@ -26,7 +25,7 @@ function ForumModal({ closeModal }) {
           tags: newPost.tags || [],
         }
       );
-      setPosts([...posts, response.data]);
+      setPosts((prevPosts) => [...prevPosts, response.data]);
       setNewPost({ title: "", content: "", tags: [] });
     } catch (error) {
       console.error("Failed to create post:", error);

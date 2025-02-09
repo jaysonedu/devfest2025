@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -77,10 +76,12 @@ export default function Forum() {
             }}
           />
         </div>
-        {openModal && <ForumModal closeModal={setOpenModal} />}
+        {openModal && (
+          <ForumModal closeModal={setOpenModal} setPosts={setPosts} />
+        )}
         <div className="mb-8">
           <div className="mb-4"></div>
-          <div className="mb-4 w-1/4">
+          <div className=" w-1/4 ml-auto">
             <select
               value={filterTag}
               onChange={(e) => setFilterTag(e.target.value)}

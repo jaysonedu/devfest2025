@@ -51,7 +51,10 @@ function Header() {
               </a>
             </nav>
           </div>
-          <form onSubmit={handleSearch} className="relative flex-1 max-w-lg ml-8">
+          <form
+            onSubmit={handleSearch}
+            className="relative flex-1 max-w-lg ml-8"
+          >
             <input
               type="text"
               placeholder="Search the forum"
