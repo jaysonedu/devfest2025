@@ -1,22 +1,30 @@
 import React, { useState } from "react";
 
-function YesNoQuestion({ question, isActive }) {
-  const [isClicked, setIsClicked] = useState(false);
+function YesNoQuestion({ question, onSelect }) {
+  const [selected, setSelectedOption] = useState(null);
+
+  const handleClick = (option) => {
+    setSelectedOption(option);
+    onSelect(option);
+  };
+
   return (
-    <div>
+    <div className="my-5">
       <h3>{question}</h3>
       <div>
         <button
-          className={`px-4 py-2 rounded ${
-            isClicked ? "bg-gray-400" : "bg-gray-200"
+          className={`px-6 py-2 mr-3 mt-2 rounded ${
+            selected === "yes" ? "bg-gray-300" : "bg-gray-100 hover:bg-gray-300"
           }`}
-          onClick={() => setIsClicked(!isClicked)}
+          onClick={() => handleClick("yes")}
         >
           Yes
         </button>
         <button
-          className="px-4 py-2 rounded"
-          onClick={() => setIsClicked(!isClicked)}
+          className={`px-6 py-2 mt-2 rounded ${
+            selected === "no" ? "bg-gray-300" : "bg-gray-100 hover:bg-gray-300"
+          }`}
+          onClick={() => handleClick("no")}
         >
           No
         </button>
