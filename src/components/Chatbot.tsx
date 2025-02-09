@@ -61,15 +61,28 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Chatbot</h2>
+    <div className="bg-white rounded-lg border border-gray-300 p-8 max-h-[400px] overflow-y-auto">
+      <h3 className="text-xl font-bold mb-4">How to use the chatbot</h3>
+      <p>
+            Our AI assistant is here to answer your questions about SNAP, help
+            you understand eligibility requirements, and guide you through the
+            application process. Feel free to ask anything related to SNAP for
+            Students!
+      </p>
+
+      <h3 className="text-xl font-bold mb-8"></h3>
       <div className="space-y-2">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`p-2 rounded ${
-              message.sender === 'user' ? 'bg-blue-100 ml-auto' : 'bg-gray-100 mr-auto'
+            className={`w-fit rounded ${
+              message.sender === 'user' ? 'border border-gray-300 ml-auto text-right self-end p-2' : 'bg-gray-200 border border-gray-200 mr-auto p-2'
             }`}
+            style={{
+              display: 'block',
+              maxWidth: '60%', // Adjust max width based on sender
+              wordBreak: 'break-word'
+            }}
           >
             {message.text}
           </div>
@@ -78,24 +91,48 @@ export default function Chatbot() {
           <div className="p-2 bg-gray-100 rounded mr-auto">Thinking...</div>
         )}
       </div>
-      <div className="mt-4 flex">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          className="flex-1 p-2 border rounded-l"
-          disabled={isLoading}
-        />
-        <button
-          onClick={handleSend}
-          className="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 disabled:bg-gray-400"
-          disabled={isLoading}
-        >
-          Send
-        </button>
-      </div>
+
+      <h3 className="text-xl font-bold mb-8"></h3>
+      
+      <div className="flex justify-between">
+          <input
+            type="text"
+            placeholder="  Type your message..."
+            className="border border-gray-400 w-full rounded mt-0 p-1"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSend();
+              }
+            }}
+          />
+          <button
+            onClick={handleSend}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-1 ml-3 rounded"
+          >
+            Continue
+          </button>
+        </div>
     </div>
   );
 }
+/*
+<div className="mt-4 flex">
+<input
+  type="text"
+  placeholder="Type your message..."
+  value={input}
+  onChange={(e) => setInput(e.target.value)}
+  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+  className="flex-1 p-2 border rounded-l"
+  disabled={isLoading}
+/>
+<button
+  onClick={handleSend}
+  className="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 disabled:bg-gray-400"
+  disabled={isLoading}
+>
+  Send
+</button>
+</div>*/
