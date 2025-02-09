@@ -4,7 +4,7 @@ import YesNoQuestion from "../../../components/YesNoQuestion";
 import Header from "../../../components/Header";
 import { useRouter } from "next/navigation";
 
-function page() {
+function Page() {
   const [hasIncome, setHasIncome] = useState(null);
   const [isIneligible, setIsIneligible] = useState(null);
   const [isUnfitToWork, setIsUnfitToWork] = useState(null);
@@ -26,7 +26,7 @@ function page() {
     ) {
       setIsIneligible(false);
     }
-  }, [hasIncome, isUnfitToWork, hasGovtAsst]);
+  }, [hasIncome, isUnfitToWork, hasGovtAsst, attendsCuny, hasWS, works20Hrs]);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -100,4 +100,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
