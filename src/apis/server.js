@@ -21,22 +21,19 @@ app.get('/api/forum/posts', (req, res) => {
 
 // API Route to create a new post
 app.post('/api/forum/posts', (req, res) => {
-  if (!req.body.title || !req.body.content) {
-    return res.status(400).json({ message: 'Title and content are required.' });
-  }
-
+  const { title, content, tags = [] } = req.body; // Ensure tags is an array
   const newPost = {
-    id: Date.now().toString(),  // Unique post ID
-    title: req.body.title,
-    content: req.body.content,
+    id: Date.now().toString(),
+    title,
+    content,
     votes: 0,
-    tags: [],
+    tags: Array.isArray(tags) ? tags : [], // Ensure tags is always an array
     comments: []
   };
-
   posts.push(newPost);
   res.status(201).json(newPost);
 });
+
 
 // API Route to upvote a specific post
 app.patch('/api/forum/posts/:id/upvote', (req, res) => {
