@@ -18,7 +18,7 @@ function Header() {
                 forum
               </a>
               <a
-                href="/chat"
+                href="/chatbot"
                 className="text-gray-600 hover:text-gray-900 underline"
               >
                 chat
