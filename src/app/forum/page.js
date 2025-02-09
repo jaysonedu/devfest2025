@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import Header from '../../components/Header'; // Import the Header component
 
 const availableTags = [
   'qna',
@@ -125,6 +126,7 @@ export default function Forum() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      <Header /> {/* Include the Header component */}
       <h1>Forum Blog</h1>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
