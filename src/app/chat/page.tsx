@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import Chatbot from '../../components/Chatbot';
+import Link from "next/link";
+import Chatbot from "../../components/Chatbot";
 
 export default function ChatbotPage() {
   return (

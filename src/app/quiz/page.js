@@ -8,7 +8,7 @@ function page() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const handleClick = (e) => {
     e.preventDefault();
-    router.push("/zip-code");
+    router.push("/quiz/zip-code");
   };
   return (
     <div className="min-h-screen bg-white pb-6">
