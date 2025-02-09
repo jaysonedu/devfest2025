@@ -1,7 +1,27 @@
 "use client";
 import { FaSearch } from "react-icons/fa";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
 
 function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (pathname !== "/forum") {
+      router.push(`/forum?search=${encodeURIComponent(searchTerm)}`);
+    } else {
+      // Update URL without page reload
+      const url = new URL(window.location.href);
+      url.searchParams.set("search", searchTerm);
+      window.history.pushState({}, "", url);
+      // Trigger forum search via URL change
+      window.dispatchEvent(new Event("popstate"));
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200">
       <div className="max-w-6xl mx-auto px-4 py-4">
@@ -31,14 +51,18 @@ function Header() {
               </a>
             </nav>
           </div>
-          <div className="relative flex-1 max-w-lg ml-8">
+          <form onSubmit={handleSearch} className="relative flex-1 max-w-lg ml-8">
             <input
               type="text"
               placeholder="Search the forum"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-3 pr-10 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             />
-            <FaSearch className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
+            <button type="submit" className="absolute right-3 top-2.5">
+              <FaSearch className="h-5 w-5 text-gray-400" />
+            </button>
+          </form>
         </div>
       </div>
     </header>

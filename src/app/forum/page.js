@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
 const availableTags = [
@@ -17,41 +18,48 @@ export default function Forum() {
   const [newPost, setNewPost] = useState({ title: '', content: '', tags: [] });
   const [expandedPost, setExpandedPost] = useState(null);
   const [commentTexts, setCommentTexts] = useState({});
-  const [searchQuery, setSearchQuery] = useState('');
   const [filterTag, setFilterTag] = useState('');
+  const searchParams = useSearchParams();
 
-  // Fetch posts from the API
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/forum/posts');
-        console.log('Fetched posts:', response.data);  // Debugging log
-        setPosts(response.data);
+        const response = await axios.get('http://localhost:5001/api/forum/posts');
+        const searchQuery = searchParams.get('search') || '';
+        
+        if (searchQuery) {
+          const filtered = response.data.filter((post) => {
+            const inTitleOrContent = 
+              post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              post.content.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            const inComments = post.comments.some((comment) =>
+              comment.text.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+
+            return inTitleOrContent || inComments;
+          });
+          setPosts(filtered);
+        } else {
+          setPosts(response.data);
+        }
       } catch (error) {
         console.error('Failed to fetch posts:', error);
       }
     };
+
     fetchPosts();
-  }, []);
+  }, [searchParams]);
 
   const filteredPosts = posts.filter((post) => {
-    const inTitleOrContent =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const inComments = post.comments.some((comment) =>
-      comment.text.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     const matchesTag = filterTag === '' || (post.tags || []).includes(filterTag);
-
-    return (inTitleOrContent || inComments) && matchesTag;
+    return matchesTag;
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/forum/posts', {
+      const response = await axios.post('http://localhost:5001/api/forum/posts', {
         ...newPost,
         tags: newPost.tags || []
       });
@@ -64,7 +72,7 @@ export default function Forum() {
 
   const upvote = async (postId) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/forum/posts/${postId}/upvote`);
+      const response = await axios.patch(`http://localhost:5001/api/forum/posts/${postId}/upvote`);
       const updatedPost = response.data;
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
@@ -76,7 +84,7 @@ export default function Forum() {
 
   const downvote = async (postId) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/forum/posts/${postId}/downvote`);
+      const response = await axios.patch(`http://localhost:5001/api/forum/posts/${postId}/downvote`);
       const updatedPost = response.data;
       setPosts((prevPosts) =>
         prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
@@ -91,7 +99,7 @@ export default function Forum() {
     if (!commentText || commentText.trim() === '') return;
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/forum/posts/${postId}/comments`, {
+      const response = await axios.post(`http://localhost:5001/api/forum/posts/${postId}/comments`, {
         text: commentText,
       });
 
@@ -140,7 +148,6 @@ export default function Forum() {
           />
         </div>
 
-        {/* Add Tags Section */}
         <div style={{ marginBottom: '10px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>Select Tags:</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
@@ -176,8 +183,13 @@ export default function Forum() {
         <input
           type="text"
           placeholder="Search by title, content, or comments..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={searchParams.get('search') || ''}
+          onChange={(e) => {
+            const url = new URL(window.location.href);
+            url.searchParams.set('search', e.target.value);
+            window.history.pushState({}, '', url);
+            window.dispatchEvent(new Event('popstate'));
+          }}
           style={{ width: '100%', padding: '10px', fontSize: '16px' }}
         />
       </div>
