@@ -21,33 +21,41 @@ app.get('/api/forum/posts', (req, res) => {
 });
 
 app.post('/api/forum/posts', (req, res) => {
-    const newPost = req.body;
-    newPost.id = new Date().getTime().toString(); // Assign a mock unique ID
-    posts.push(newPost);
-    res.status(201).json(newPost);
-  });
+  const newPost = {
+    ...req.body,
+    id: new Date().getTime().toString(),  // Assign a mock unique ID
+    votes: 0,                             // Initialize votes to 0
+    tags: [],                             // Initialize tags as an empty array
+    comments: 0                           // Initialize comments count to 0
+  };
+
+  posts.push(newPost);
+  res.status(201).json(newPost);
+});
+
 
 app.patch('/api/forum/posts/:id/upvote', (req, res) => {
-    const postId = parseInt(req.params.id);
-    const post = posts.find((p) => p.id === postId);
-    if (post) {
-      post.votes = post.votes + 1;
-      res.json(post);
-    } else {
-      res.status(404).json({ message: 'Post not found' });
-    }
-  });
-  
+  const postId = req.params.id;  // Keep postId as a string
+  const post = posts.find((p) => p.id === postId);
+  if (post) {
+    post.votes = (post.votes || 0) + 1;
+    res.json(post);
+  } else {
+    res.status(404).json({ message: 'Post not found' });
+  }
+});
+
 app.patch('/api/forum/posts/:id/downvote', (req, res) => {
-    const postId = parseInt(req.params.id);
-    const post = posts.find((p) => p.id === postId);
-    if (post) {
-      post.votes = post.votes - 1;
-      res.json(post);
-    } else {
-      res.status(404).json({ message: 'Post not found' });
-    }
-  });
+  const postId = req.params.id;  // Keep postId as a string
+  const post = posts.find((p) => p.id === postId);
+  if (post) {
+    post.votes = (post.votes || 0) - 1;
+    res.json(post);
+  } else {
+    res.status(404).json({ message: 'Post not found' });
+  }
+});
+
   
 
 // Start server

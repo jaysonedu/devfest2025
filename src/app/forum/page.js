@@ -32,6 +32,33 @@ export default function Forum() {
     }
   };
 
+  const upvote = async (postId) => {
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/forum/posts/${postId}/upvote`);
+      const updatedPost = response.data;
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+      );
+    } catch (error) {
+      console.error('Failed to upvote post:', error);
+    }
+  };
+  
+  const downvote = async (postId) => {
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/forum/posts/${postId}/downvote`);
+      const updatedPost = response.data;
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+      );
+    } catch (error) {
+      console.error('Failed to downvote post:', error);
+    }
+  };
+  
+  
+  
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Forum Blog</h1>
@@ -72,10 +99,28 @@ export default function Forum() {
             <div key={post.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
               <h3>{post.title}</h3>
               <p>{post.content}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                <button
+                  onClick={() => upvote(post.id)}
+                  style={{ padding: '5px 10px', fontSize: '14px', cursor: 'pointer' }}
+                >
+                  ⬆️ Upvote
+                </button>
+                <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Votes: {post.votes || 0}</span>
+                <button
+                  onClick={() => downvote(post.id)}
+                  style={{ padding: '5px 10px', fontSize: '14px', cursor: 'pointer' }}
+                >
+                  ⬇️ Downvote
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
+
     </div>
+
+
   );
 }
