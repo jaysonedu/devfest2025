@@ -7,6 +7,7 @@ export default function Forum() {
   const [newPost, setNewPost] = useState({ title: '', content: '' });
   const [expandedPost, setExpandedPost] = useState(null);
   const [commentTexts, setCommentTexts] = useState({}); // Tracks comment text for each post
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch posts from the API
   useEffect(() => {
@@ -20,6 +21,18 @@ export default function Forum() {
     };
     fetchPosts();
   }, []);
+
+  const filteredPosts = posts.filter((post) => {
+    const inTitleOrContent =
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const inComments = post.comments.some((comment) =>
+      comment.text.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return inTitleOrContent || inComments;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,12 +128,22 @@ export default function Forum() {
         </button>
       </form>
 
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Search by title or content..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+        />
+      </div>
+
       <div>
         <h2>Posts</h2>
         {posts.length === 0 ? (
           <p>No posts found.</p>
         ) : (
-          posts.map((post) => (
+          filteredPosts.map((post) => (
             <div key={post.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '20px' }}>
               <h3>{post.title}</h3>
               <p>{post.content}</p>
